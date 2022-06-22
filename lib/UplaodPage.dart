@@ -1,4 +1,4 @@
-    import 'dart:typed_data';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -44,12 +44,18 @@ class _UplaodPageState extends State<UplaodPage> {
                                 100)
                             .roundToDouble();
 
-                            print(progress);
+                        if (progress == 100) {
+                          event.ref
+                              .getDownloadURL()
+                              .then((downloadUrl) => print(downloadUrl));
+                        }
+
+                        print(progress);
                       });
                     });
                   }
                 },
-                child: Text("Upload"),
+                child: Text("Upload File to Firebase Storage"),
               ),
               SizedBox(
                 height: 50.0,
@@ -57,16 +63,38 @@ class _UplaodPageState extends State<UplaodPage> {
               Container(
                 height: 200.0,
                 width: 200.0,
-                child: LiquidCircularProgressIndicator(
-                  value: progress/100,
-                  valueColor: AlwaysStoppedAnimation(Colors.pinkAccent),
-                  backgroundColor: Colors.white,
-                  direction: Axis.vertical,
-                  center: Text(
-                    "$progress%",
-                    style: GoogleFonts.poppins(
-                        color: Colors.black87, fontSize: 25.0),
-                  ),
+                child: AnimatedSwitcher(
+                  duration: Duration(milliseconds: 375),
+                  child: progress == 100.0
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.check_rounded,
+                              color: Colors.green,
+                            ),
+                            SizedBox(
+                              width: 5.0,
+                            ),
+                            Text(
+                              'Upload Complete',
+                              style: GoogleFonts.poppins(
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
+                        )
+                      : LiquidCircularProgressIndicator(
+                          value: progress / 100,
+                          valueColor: AlwaysStoppedAnimation(Colors.pinkAccent),
+                          backgroundColor: Colors.white,
+                          direction: Axis.vertical,
+                          center: Text(
+                            "$progress%",
+                            style: GoogleFonts.poppins(
+                                color: Colors.black87, fontSize: 25.0),
+                          ),
+                        ),
                 ),
               )
             ],
